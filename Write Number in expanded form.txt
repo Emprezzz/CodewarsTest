@@ -1,0 +1,14 @@
+def expanded_form(num):
+    
+    a = str(num)
+    b = ''
+    c = 1
+    
+    for x in a:
+        if(x!='0'):
+            b += str( int(x) * (10** (len(a)-c) ) )
+            b += ' + '
+            
+        c += 1
+        
+    return b[:-3]

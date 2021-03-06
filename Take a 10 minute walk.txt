@@ -1,0 +1,23 @@
+def is_valid_walk(walk):
+    #determine if walk is valid
+    x = 0
+    y = 0
+    counter = 0
+
+    for d in walk:
+        if(d=='n'):
+            y += 1
+        elif(d=='s'):
+            y -= 1
+        elif(d=='e'):
+            x -= 1
+        elif(d=='w'):
+            x += 1
+        counter += 1    
+    
+    if(counter == 10 and x == 0 and y == 0):
+        valid = True
+    else: 
+        valid = False
+    
+    return valid

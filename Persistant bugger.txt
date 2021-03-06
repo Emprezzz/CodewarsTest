@@ -1,0 +1,16 @@
+def persistence(n):
+    counter = 0
+    u = n
+    
+    while(u>9):
+        
+        a = str(u) #transforms int to str
+        u = 1
+        
+        for z in a:
+            c = int(z) #multiplies all elements of the string with each other 
+            u *= c
+            
+        counter += 1
+        
+    return counter

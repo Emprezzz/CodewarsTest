@@ -1,0 +1,7 @@
+def array_diff(a, b):
+    list1 = a
+    list2 = b
+    
+    for x in list2:
+        list1 = [y for y in list1 if y!=x]
+    return list1
