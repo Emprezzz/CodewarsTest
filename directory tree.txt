@@ -1,0 +1,74 @@
+from typing import List
+
+def sortfunc(z):
+    return False if "." not in z else True
+
+def recprint(key, dict, uselist):
+
+    if key in dict.keys():
+        if key not in uselist:
+            print("├── " + key)
+        if type(dict[key]) == list:
+            for a in dict[key]:
+                if a not in uselist:
+                    end = "└── " if dict[key].index(a) == len(dict[key])-1 else "├── "
+                    print("│   " + end + a)
+                    if a in dict.keys():
+                        uselist.append(a)
+
+                        recprint(a, dict, uselist)
+
+
+        else:
+            if dict[key] not in uselist:
+
+                print("│   └── " + dict[key])
+                uselist.append(dict[key])
+                if dict[key] in dict.keys():
+
+                    recprint(dict[key], dict, uselist)
+
+def tree(root: str, files: List[str]):
+    directorydict = {}
+    cfiles = files
+    cfiles.sort()
+    #print(cfiles)
+
+
+    cfiles = [a.split("/") for a in cfiles]
+
+
+    for a in cfiles:
+        for b in a[0:-1]:
+            if b not in directorydict:
+
+                directorydict[b] = a[a.index(b) + 1]
+            else:
+                if a[a.index(b) + 1] not in directorydict.get(b):
+                    templist = []
+                    if type(directorydict.get(b)) == list:
+                        templist.extend(directorydict.get(b))
+                    else:
+                        templist.append(directorydict.get(b))
+
+                    templist.append(a[a.index(b) + 1])
+
+                    directorydict.update({b: templist})
+
+    #print(directorydict)
+
+    for e in directorydict.keys():
+        if type(directorydict[e]) == list:
+            directorydict[e].sort(key=sortfunc)
+
+    #print(directorydict)
+
+    print(root)
+    uselist = []
+
+    for d in directorydict.keys():
+
+        recprint(d, directorydict, uselist)
+
+
+tree('Desktop', filelist)
