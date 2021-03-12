@@ -1,0 +1,85 @@
+root = 'Desktop'
+filelist = [
+        'meetings/2021-01-12/notes.txt',
+        'meetings/2020_calendar.xlsx',
+        'meetings/2021-01-12/report.pdf',
+        'misc/photos/forest_20130430.jpg',
+        'misc/photos/sunset_20130412.jpg',
+        'scripts/tree.py',
+        'meetings/2021-01-24/report.pdf',
+    ]
+
+from typing import List
+
+def sortfunc(z):                                            #zum sortieren nach datei(enthält ".") oder ordner(enthält kein ".")
+    return False if "." not in z else True
+
+def recprint(key, dict, uselist, counter):                  #rekursive print funktion
+
+    if key in dict.keys():
+        if key not in uselist:
+                print("├── " + key)
+        if type(dict[key]) == list:                         #behandelt bei listen elemente der liste einzeln
+            for a in dict[key]:
+                end = "└── " if dict[key].index(a) == len(dict[key])-1 else "├── "
+                print("│   " + "|   " * (counter) + end + a)
+                if a in dict.keys():
+                    uselist.append(a)                       #sperrt key damit keine dopplungen auftreten wenn key schon als value von anderem key auftrat
+                    counter += 1
+                    recprint(a, dict, uselist, counter)     #gibt bei value das selber als key auftritt das value als key an rekursion weiter
+                    counter -= 1
+            counter += 1
+
+        else:                                               #behandelt einzelne values
+            end = "├── " if type(dict[key]) == list else "└── "
+            print("│   " + "│   " * counter + end + dict[key])
+            uselist.append(dict[key])
+
+            if dict[key] in dict.keys():
+                counter += 1
+                recprint(dict[key], dict, uselist, counter)
+                counter -= 1
+            counter += 1
+
+
+def tree(root: str, files: List[str]):          #masterfunktion
+    directorydict = {}
+    cfiles = files
+    cfiles.sort()
+    #print(cfiles)
+
+    cfiles = [a.split("/") for a in cfiles]
+
+    for a in cfiles:                                                #befüllt dictionary mit
+        for b in a[0:-1]:
+            if b not in directorydict:                              #keys = alle elemente außer dateinamen)
+                directorydict[b] = a[a.index(b) + 1]                #values = alle elemente außer top level directories
+            else:
+                if a[a.index(b) + 1] not in directorydict.get(b):   #erster zweig neue einträge(mit neuen keys)
+                    templist = []
+                    if type(directorydict.get(b)) == list:          #zweiter zweig neue values zu bestehenden keys wenn der key aus vorherigen path schon da ist
+                        templist.extend(directorydict.get(b))
+                    else:
+                        templist.append(directorydict.get(b))
+
+                    templist.append(a[a.index(b) + 1])
+
+                    directorydict.update({b: templist})
+
+    #print(directorydict)
+
+    for e in directorydict.keys():                                  #sortiert values nach erst directories dann dateien, danach alphabetisch
+        if type(directorydict[e]) == list:
+            directorydict[e].sort(key=sortfunc)
+
+    #print(directorydict)
+
+    print(root)
+    uselist = []
+
+    for d in directorydict.keys():                                  #gibt baumstruktur aus über rekursive funktion
+        if d not in uselist:
+            recprint(d, directorydict, uselist, 0)
+
+tree('Desktop', filelist)
+
